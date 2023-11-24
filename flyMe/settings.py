@@ -26,8 +26,8 @@ SECRET_KEY = 'django-insecure-(w)xn^tzxh15=eo@!agw#$zsrg5rzmszum#fcv96n)6#9m$12@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = ['*']
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['.vercel.app']
 
 
 # Application definition
@@ -39,19 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts.apps.AccountsConfig',
-    'countries.apps.CountriesConfig',
     'flights.apps.FlightsConfig',
-    'rest_framework',
-    'cities_light',
-    'rest_framework.authtoken',
-    "corsheaders",
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -148,75 +141,4 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-# to create custom user model
-AUTH_USER_MODEL = 'accounts.MyUser'
 
-
-from decouple import config
-# pip install python-decouple
-# to use .env
-
-# Email Config
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_FROM_USER = config('EMAIL_FROM_USER')
-EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-EMAIL_USE_TLS = False
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
-EMAIL_DEBUG = True
-URL = 'http://127.0.0.1:8000'
-
-
-AUTHENTICATION_BACKENDS = [
-    'accounts.backends.EmailBackend',
-    'django.contrib.auth.backends.ModelBackend',  # Optional: default Django authentication
-]
-
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny'
-    ]
-}
-
-STRIPE_SECRET_KEY = 'sk_test_51OFOMOHTOkeScdk3KfrWrvl7ozrRCpjpAxX5IFPICUqsbDuky7fmUV6Rajbq1yIz2pKRXst0XfKcO0zvxKpYxhsl00MICSy0HB'
-
-SITE_URL = "http://localhost:3000"
-
-from django.contrib.messages import constants as messages
-MESSAGE_TAGS = {
-    messages.DEBUG: 'alert-secondary',
-    messages.INFO: 'alert-info',
-    messages.SUCCESS: 'alert-success',
-    messages.WARNING: 'alert-warning',
-    messages.ERROR: 'alert-danger',
-}
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:3001",
-]
-CORS_ALLOW_ALL_ORIGINS = True
-CSRF_TRUSTED_ORIGINS = [
-        "http://localhost:3000",
-        "http://localhost:3001",
-    ]
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https://\w+\.example\.com$",
-]
-# CELERY_BROKER_URL = "redis://localhost:6379/0"
-# CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
-# CELERY_TIMEZONE = 'UTC'
-# CELERY_TASK_ALWAYS_EAGER = True
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-    ],
-}
-
-CORS_ALLOW_ALL_ORIGINS = True
-
-# CORS_ALLOW_HEADERS = [
-#     'headers', 
-# ]
