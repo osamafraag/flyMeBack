@@ -1,4 +1,7 @@
 .env
 .pyc
 __pycache__
+migrations
 countries/migrations/
+accounts/migrations/
+flights/migrations/
