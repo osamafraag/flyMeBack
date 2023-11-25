@@ -1,10 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth import get_user_model
+# from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-from countries.models import city,country
-from cities_light.abstract_models import AbstractRegion
+from countries.models import City,Country
 
 class MyUser(AbstractUser):
     GENDER_CHOICES = [
@@ -19,16 +18,15 @@ class MyUser(AbstractUser):
     is_email_verified = models.BooleanField(default=False)
     activation_link_created_at = models.DateTimeField(null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)
-    country = models.ForeignKey(country, on_delete=models.SET_NULL, null=True, blank=True,related_name='users')
-    city = models.ForeignKey(city, on_delete=models.SET_NULL, null=True, blank=True,related_name='users')
-    region = models.ForeignKey(AbstractRegion, on_delete=models.SET_NULL, null=True, blank=True,related_name='users')
+    country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True, blank=True,related_name='usersc')
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=True,related_name='userst')
+    region = models.ForeignKey('cities_light.Region', on_delete=models.SET_NULL, null=True, blank=True,related_name='usersr')
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
     post_code = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     email_verification_code = models.CharField(max_length=6, blank=True, null=True)
     activation_code = models.CharField(max_length=6, blank=True, null=True)
-
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -99,7 +97,7 @@ class Transaction(models.Model):
 
 
 class Wallet(models.Model):
-    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE,related_name='wallet')
+    user = models.OneToOneField(MyUser, on_delete=models.CASCADE,related_name='wallet')
     available_balance = models.FloatField(default=0, null=True, blank=True)
     pendding_balance = models.FloatField(default=0, null=True, blank=True)
     withdrawal = models.FloatField(default=0, null=True, blank=True)
@@ -148,7 +146,7 @@ class Notification(models.Model):
         ('READ', 'Read'),
         ('UNREAD', 'Unread')
     ]
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,related_name='notifications')
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE,related_name='notifications')
     title = models.CharField()
     description = models.CharField()
     date = models.DateTimeField(auto_now_add=True)
