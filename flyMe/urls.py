@@ -8,8 +8,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('accounts/',include('accounts.urls')),
-    # path('countries/',include('countries.urls')),
-    # path('flights/',include('flights.urls')),
+    path('countries/',include('countries.urls')),
+    path('flights/',include('flights.urls')),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

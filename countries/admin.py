@@ -1,3 +1,11 @@
 from django.contrib import admin
 
-# Register your models here.
+from countries.models import *
+admin.site.register(Country)
+admin.site.register(City)
+admin.site.register(AirPort) 
+admin.site.register(TrendingPlace) 
+admin.site.register(MultiImagesCountry)
+admin.site.register(MultiImagesTrendingPlace)
+admin.site.register(MultiImagesCity)
+admin.site.register(Event)
