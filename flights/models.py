@@ -1,10 +1,11 @@
 from django.db import models
 from countries.models import *
-from accounts.models import MyUser, Transaction,Notification
+from accounts.models import MyUser, Transaction
 from datetime import datetime
 from geopy.distance import geodesic
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
+from accounts.models import Notification
 from django.core.mail import send_mail
 
 
@@ -47,7 +48,7 @@ class Flight(models.Model):
     availableSeats = models.PositiveIntegerField(default=0)
     baseCost = models.FloatField(default=1000, validators=[MinValueValidator(0)])
     offerPercentage = models.FloatField(default=0, validators=[MinValueValidator(0),MaxValueValidator(99)])
-    status = models.CharField(max_length=1, choices=statuses, default='M')
+    status = models.CharField(max_length=1, choices=statuses, default='A')
 
     def __str__(self) :
         return f"From {self.startAirport} To {self.endAirport} At {self.departureTime}"
@@ -67,13 +68,16 @@ class Flight(models.Model):
         self.distance = geodesic(startCoords, endCoords).kilometers
         if self.distance > self.aircraft.maxDistance:
             raise ValidationError({'aircraft':'aircraft max distance is less than flight distance'})
-        if self.departureTime.timestamp() < datetime.now().timestamp() :
-            raise ValidationError({'departureTime':'departureTime can`t be before now'})
-        if self.arrivalTime.timestamp() < self.departureTime.timestamp() :
-            raise ValidationError({'arrivalTime':'arrivalTime can`t be before departureTime'})
+        if self.departureTime.timestamp() <= datetime.now().timestamp() :
+            raise ValidationError({'departureTime':'Departure Time can`t be before Now'})
+        if self.arrivalTime.timestamp() <= self.departureTime.timestamp() :
+            raise ValidationError({'arrivalTime':'Arrival Time can`t be before Departure Time'})
+        if self.baseCost < 500 :
+            raise ValidationError({'baseCost':'Base Cost Can Not Be Less Than 500!!!'})
         
     
     def save(self,update=True, *args, **kwargs):
+        self.full_clean()
         if update:
             if self.status == 'C':
                 books = BookHistory.objects.filter(flight=self.id)
@@ -118,9 +122,7 @@ class Flight(models.Model):
                                 [notify.user.email],
                                 fail_silently=False,
                                 )
-                                #-------------------------------
-        else:    
-            self.full_clean()
+                                #-------------------------------         
         super().save(*args, **kwargs)
         
 class Class(models.Model):
@@ -268,3 +270,14 @@ class BookHistory(models.Model):
             flight.save(True)
             flight.endAirport.city.country.save()
             flight.endAirport.city.save()
+
+
+# import schedule
+
+# def job():
+#     print("Hello, world!")
+
+# schedule.every().day.at("10:00").do(job)
+
+# while True:
+#     schedule.run_pending()
